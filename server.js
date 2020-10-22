@@ -12,7 +12,7 @@ app.use(express.json());
 // allowing below URL to access these APIs end-points
 // you can replace this URL(http://localhost:8100) with your
 // application URL from where you are calling these APIs
-app.use(cors({origin: 'http://localhost:8100'}));
+app.use(cors({origin: 'http://tuyaserver.herokuapp.com'}));
 
 /* this '/items' URL will have two end-points:
 → localhost:3000/items/ (this returns array of objects)
@@ -26,6 +26,6 @@ app.use('/', function(req, res) {
 });
 
 const server = http.createServer(app);
-const port = 3000;
+const port = process.env.PORT || 8080;
 server.listen(port);
 console.debug('Server listening on port ' + port);
