@@ -46,13 +46,13 @@ router.get('/:id', function (req, res) {
 
 
 router.get('/turnOn', function(req, res) {
-    http.get('http://now.zerynth.com/', (res) => {
-        const { statusCode } = res;
-        const contentType = res.headers['content-type'];
-        res.setEncoding('utf8');
+    http.get('http://now.zerynth.com/', (res2) => {
+        const { statusCode } = res2;
+        const contentType = res2.headers['content-type'];
+        res2.setEncoding('utf8');
         let rawData = '';
-        res.on('data', (chunk) => { rawData += chunk; });
-        res.on('end', () => {
+        res2.on('data', (chunk) => { rawData += chunk; });
+        res2.on('end', () => {
             try {
               const parsedData = JSON.parse(rawData);
               res.status(200).JSON(parsedData)
