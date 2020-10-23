@@ -145,6 +145,9 @@ app.post('/onoff', function(req, res) {
             res2.on('end', () => {
                 try {
                     let data = JSON.parse(rawData);
+                    if (data['success'] == false){
+                        refreshAccessToken();
+                    }
                     console.log(data);
                     results.push(data);
                 } catch (e) {
@@ -183,6 +186,9 @@ app.post('/modechange', function(req, res) {
             res2.on('end', () => {
                 try {
                     let data = JSON.parse(rawData);
+                    if (data['success'] == false){
+                        refreshAccessToken();
+                    }
                     console.log(data);
                     results.push(data);
                 } catch (e) {
@@ -222,6 +228,9 @@ app.post('/brightup', function(req, res) {
             res2.on('end', () => {
                 try {
                     let data = JSON.parse(rawData);
+                    if (data['success'] == false){
+                        refreshAccessToken();
+                    }
                     console.log(data);
                     results.push(data);
                 } catch (e) {
@@ -262,6 +271,9 @@ app.post('/brightdown', function(req, res) {
             res2.on('end', () => {
                 try {
                     let data = JSON.parse(rawData);
+                    if (data['success'] == false){
+                        refreshAccessToken();
+                    }
                     console.log(data);
                     results.push(data);
                 } catch (e) {
