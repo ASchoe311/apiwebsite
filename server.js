@@ -20,9 +20,24 @@ app.use(cors({origin: 'http://tuyaserver.herokuapp.com'}));
 */
 app.use('/items', itemsRouter);
 app.use('/turnOn', itemsRouter);
+
 // default URL to API
 app.use('/', function(req, res) {
-    res.send('node-ex-api works :-)');
+    http.get('http://now.zerynth.com/', (res2) => {
+        const { statusCode } = res2;
+        const contentType = res2.headers['content-type'];
+        res2.setEncoding('utf8');
+        let rawData = '';
+        res2.on('data', (chunk) => { rawData += chunk; });
+        res2.on('end', () => {
+            try {
+              const parsedData = JSON.parse(rawData);
+              res.send(parsedData)
+            } catch (e) {
+              console.error(e.message);
+            }
+        });
+    });
 });
 
 const server = http.createServer(app);
