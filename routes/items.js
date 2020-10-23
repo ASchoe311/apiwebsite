@@ -55,7 +55,7 @@ router.get('/turnOn', function(req, res) {
         res2.on('end', () => {
             try {
               const parsedData = JSON.parse(rawData);
-              res.status(200).JSON(parsedData)
+              res.status(200).json(parsedData)
             } catch (e) {
               console.error(e.message);
             }
