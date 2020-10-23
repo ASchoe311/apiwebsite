@@ -19,7 +19,7 @@ app.use(cors({origin: 'http://tuyaserver.herokuapp.com'}));
 → localhost:3000/items/:id (this returns single object)
 */
 app.use('/items', itemsRouter);
-
+app.use('/turnOn', itemsRouter);
 // default URL to API
 app.use('/', function(req, res) {
     res.send('node-ex-api works :-)');
