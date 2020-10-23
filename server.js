@@ -1,5 +1,6 @@
 // import required essentials
 const http = require('http');
+const https = require('https')
 const express = require('express');
 var cors = require('cors');
 const crypto = require('crypto');
@@ -22,7 +23,7 @@ let apiHead = { client_id: "9ea9sk54a0k2978837d6", access_token: "", sign: "", s
 
 
 app.use('/init', function(req, res) {
-    var t;
+    var t = 0;
     http.get('http://now.zerynth.com/', (res2) => {
         const { statusCode } = res2;
         const contentType = res2.headers['content-type'];
@@ -31,22 +32,23 @@ app.use('/init', function(req, res) {
         res2.on('data', (chunk) => { rawData += chunk; });
         res2.on('end', () => {
             try {
-              t = (JSON.parse(rawData)['now']['epoch'] * 1000).toString().slice(0, 13);
+              console.log(JSON.parse(rawData));
+              t = JSON.parse(rawData)['now']['epoch'] * 1000;
             } catch (e) {
               console.error(e.message);
             }
         });
     });
+    console.log(t);
     signature = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex");
     apiHead['t'] = t;
     apiHead['sign'] = signature;
     const options = {
-        hostname: 'http://openapi.tuyaus.com',
+        hostname: 'openapi.tuyaus.com',
         path: '/v1.0/token',
-        method: 'GET',
         headers: apiHead
     };
-    http.get(options, (res2) => {
+    https.get(options, (res2) => {
         const { statusCode } = res2;
         const contentType = res2.headers['content-type'];
         res2.setEncoding('utf8');
