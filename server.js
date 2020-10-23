@@ -24,7 +24,6 @@ let apiHead = { client_id: '9ea9sk54a0k2978837d6', access_token: '', sign: '', s
 app.use('/init', function(req, res) {
     const hmac1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d');
     hmac1.update(apiHead['client_id']);
-    var t;
     http.get('http://now.zerynth.com/', (res2) => {
         const { statusCode } = res2;
         const contentType = res2.headers['content-type'];
@@ -33,7 +32,31 @@ app.use('/init', function(req, res) {
         res2.on('data', (chunk) => { rawData += chunk; });
         res2.on('end', () => {
             try {
-              t = JSON.parse(rawData['now']);
+              t = JSON.parse(rawData)['now']['epoch'];
+            } catch (e) {
+              console.error(e.message);
+            }
+        });
+    });
+    apiHead['t'] = t;
+    hmac1.update(t)
+    signature = hmac1.digest('hex');
+    apiHead['sign'] = signature;
+    const options = {
+        hostname: 'http://openapi.tuyaus.com',
+        path: '/v1.0/token',
+        method: 'GET',
+        headers: apiHead
+    };
+    http.get(options, (res2) => {
+        const { statusCode } = res2;
+        const contentType = res2.headers['content-type'];
+        res2.setEncoding('utf8');
+        let rawData = '';
+        res2.on('data', (chunk) => { rawData += chunk; });
+        res2.on('end', () => {
+            try {
+              res.send(JSON.parse(rawData));
             } catch (e) {
               console.error(e.message);
             }
@@ -43,22 +66,7 @@ app.use('/init', function(req, res) {
 
 // default URL to API
 app.use('/', function(req, res) {
-    //res.send("Nothing to see here")
-    http.get('http://now.zerynth.com/', (res2) => {
-        const { statusCode } = res2;
-        const contentType = res2.headers['content-type'];
-        res2.setEncoding('utf8');
-        let rawData = '';
-        res2.on('data', (chunk) => { rawData += chunk; });
-        res2.on('end', () => {
-            try {
-              const parsedData = JSON.parse(rawData);
-              res.send(parsedData['now'])
-            } catch (e) {
-              console.error(e.message);
-            }
-        });
-    });
+    res.send("Nothing to see here")
 });
 
 const server = http.createServer(app);
