@@ -4,6 +4,7 @@ const https = require('https')
 const express = require('express');
 var cors = require('cors');
 const crypto = require('crypto');
+const fetch = require('node-fetch');
 
 // create new app
 const app = express();
@@ -19,49 +20,122 @@ app.use(cors({origin: 'http://tuyaserver.herokuapp.com'}));
 → localhost:3000/items/:id (this returns single object)
 */
 
-let apiHead = { client_id: "9ea9sk54a0k2978837d6", access_token: "", sign: "", sign_method: "HMAC-SHA256", t: 0};
+var apiHead = { client_id: "9ea9sk54a0k2978837d6", access_token: "", sign: "", sign_method: "HMAC-SHA256", t: 0};
+var keyExpireTime = 0;
+var refreshToken;
+var brightness;
+var lightsOn;
+var workingMode;
 
-
-app.use('/init', function(req, res) {
-    var t = 0;
-    http.get('http://now.zerynth.com/', (res2) => {
-        const { statusCode } = res2;
-        const contentType = res2.headers['content-type'];
-        res2.setEncoding('utf8');
-        let rawData = '';
-        res2.on('data', (chunk) => { rawData += chunk; });
-        res2.on('end', () => {
-            try {
-              console.log(JSON.parse(rawData));
-              t = JSON.parse(rawData)['now']['epoch'] * 1000;
-            } catch (e) {
-              console.error(e.message);
-            }
-        });
-    });
-    console.log(t);
-    signature = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex");
-    apiHead['t'] = t;
-    apiHead['sign'] = signature;
-    const options = {
+const initialize = () => {
+    var t = Date.now();
+    const signature1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
+    apiHead.t = t;
+    apiHead.sign = signature1;
+    var options = {
         hostname: 'openapi.tuyaus.com',
-        path: '/v1.0/token',
+        path: '/v1.0/token?grant_type=1',
         headers: apiHead
     };
-    https.get(options, (res2) => {
-        const { statusCode } = res2;
-        const contentType = res2.headers['content-type'];
-        res2.setEncoding('utf8');
-        let rawData = '';
-        res2.on('data', (chunk) => { rawData += chunk; });
-        res2.on('end', () => {
-            try {
-              res.send(JSON.parse(rawData));
-            } catch (e) {
-              console.error(e.message);
-            }
-        });
-    });
+    fetch('https://openapi.tuyaus.com/v1.0/token?grant_type=1', {
+        headers: apiHead
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            apiHead.access_token = data['result']['access_token'];
+            keyExpireTime = data['result']['expire_time'];
+            refreshToken = data['result']['refresh_token'];
+            console.log(apiHead);
+            t = Date.now();
+            const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+            apiHead.t = t;
+            apiHead.sign = signature2;
+            let opts = {
+                hostname: 'openapi.tuyaus.com',
+                path: '/v1.0/devices/64304636a4cf12d76aad/status',
+                headers: apiHead
+            };
+            https.get(opts, (res2) => {
+                const { statusCode } = res2;
+                const contentType = res2.headers['content-type'];
+                res2.setEncoding('utf8');
+                let rawData = '';
+                res2.on('data', (chunk) => { rawData += chunk; });
+                res2.on('end', () => {
+                    try {
+                        let data = JSON.parse(rawData);
+                        console.log(data)
+                        brightness = data['result'][2]['value']
+                        lightsOn = data['result'][0]['value']
+                        workingMode = data['result'][1]['value']
+                      //res.send(JSON.parse(rawData));
+                    } catch (e) {
+                      console.error(e.message);
+                    }
+                });
+            });
+        })
+        .catch((error) => {console.log(error)});
+}
+
+app.use('/init', function(req, res) {
+    var t = Date.now();
+    const signature1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
+    apiHead.t = t;
+    apiHead.sign = signature1;
+    var options = {
+        hostname: 'openapi.tuyaus.com',
+        path: '/v1.0/token?grant_type=1',
+        headers: apiHead
+    };
+    fetch('https://openapi.tuyaus.com/v1.0/token?grant_type=1', {
+        headers: apiHead
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            apiHead.access_token = data['result']['access_token'];
+            keyExpireTime = data['result']['expire_time'];
+            refreshToken = data['result']['refresh_token'];
+            console.log(apiHead);
+            t = Date.now();
+            const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+            apiHead.t = t;
+            apiHead.sign = signature2;
+            let opts = {
+                hostname: 'openapi.tuyaus.com',
+                path: '/v1.0/devices/64304636a4cf12d76aad/status',
+                headers: apiHead
+            };
+            https.get(opts, (res2) => {
+                const { statusCode } = res2;
+                const contentType = res2.headers['content-type'];
+                res2.setEncoding('utf8');
+                let rawData = '';
+                res2.on('data', (chunk) => { rawData += chunk; });
+                res2.on('end', () => {
+                    try {
+                        let data = JSON.parse(rawData);
+                        brightness = data['result'][2]['value']
+                        lightsOn = data['result'][0]['value']
+                        workingMode = data['result'][1]['value']
+                      res.send(JSON.parse(rawData));
+                    } catch (e) {
+                      console.error(e.message);
+                    }
+                });
+            });
+        })
+        .catch((error) => {console.log(error)});
+    
+});
+
+app.use('/turnOn', function(req, res) {
+    if (apiHead['access_token'] == "") {
+        initialize();
+    }
+    
 });
 
 // default URL to API
