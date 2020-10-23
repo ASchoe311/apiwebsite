@@ -127,7 +127,9 @@ const initialize = () => {
 
 initialize();
 
-app.use('/onoff', function(req, res) {
+const router = express.Router();
+
+router.get('/onoff', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -165,7 +167,7 @@ app.use('/onoff', function(req, res) {
     res.send(results);
 });
 
-app.use('/modechange', function(req, res) {
+router.get('/modechange', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -204,7 +206,7 @@ app.use('/modechange', function(req, res) {
 });
 
 
-app.use('/brightup', function(req, res) {
+router.get('/brightup', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i){
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -244,7 +246,7 @@ app.use('/brightup', function(req, res) {
     res.send(results);
 });
 
-app.use('/brightdown', function(req, res) {
+router.get('/brightdown', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";

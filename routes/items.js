@@ -3,16 +3,7 @@ const express = require('express');
 // create new router
 const router = express.Router();
 
-// devices = {'lights': ["64304636a4cf12d76aad", "55008855483fdac28931"]}
-// api = "http://openapi.tuyaus.com"
-// clientID = "9ea9sk54a0k2978837d6"
-// key = ""
-// #uid = "bay1603131270477PexJ"
-// sm = "HMAC-SHA256"
-// commandEnd = "/v1.0/devices/[id]/commands"
-// tokenEnd = "/v1.0/token"
-// statusEnd = "/v1.0/devices/[id]/status"
-// create a JSON data array
+
 let data = [
     { client_id: '', access_token: '', sign: '', sign_method: 'HMAC-SHA256', t: 0},
     { id: 1, title: 'Create a project',  order: 1, completed: true, createdOn: new Date() },
