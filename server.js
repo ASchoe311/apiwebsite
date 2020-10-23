@@ -164,7 +164,7 @@ router.get('/onoff', function(req, res) {
         }
         req2.end();
     }
-    res.send(results);
+    res.status(200).json(results);
 });
 
 router.get('/modechange', function(req, res) {
@@ -202,7 +202,7 @@ router.get('/modechange', function(req, res) {
         }
         req2.end();
     }
-    res.send(results);
+    res.status(200).json(results);
 });
 
 
@@ -243,7 +243,7 @@ router.get('/brightup', function(req, res) {
         req2.write(JSON.stringify(thisCommand));
         req2.end();
     }
-    res.send(results);
+    res.status(200).json(results);
 });
 
 router.get('/brightdown', function(req, res) {
@@ -283,7 +283,7 @@ router.get('/brightdown', function(req, res) {
         req2.write(JSON.stringify(thisCommand));
         req2.end();
     }
-    res.send(results);
+    res.status(200).json(results);
 });
 
 // default URL to API
