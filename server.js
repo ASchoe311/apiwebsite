@@ -127,7 +127,7 @@ const initialize = () => {
 
 initialize();
 
-app.get('/onoff', function(req, res) {
+app.post('/onoff', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -165,7 +165,7 @@ app.get('/onoff', function(req, res) {
     res.status(200).json({results: [{sucess: true}]});
 });
 
-app.get('/modechange', function(req, res) {
+app.post('/modechange', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -204,7 +204,7 @@ app.get('/modechange', function(req, res) {
 });
 
 
-app.get('/brightup', function(req, res) {
+app.post('/brightup', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i){
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -244,7 +244,7 @@ app.get('/brightup', function(req, res) {
     res.status(200).json({results: [{sucess: true}]});
 });
 
-app.get('/brightdown', function(req, res) {
+app.post('/brightdown', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
