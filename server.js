@@ -2,8 +2,7 @@
 const http = require('http');
 const express = require('express');
 var cors = require('cors');
-// import `items` from `routes` folder 
-const itemsRouter = require('./routes/items');
+const crypto = require('crypto');
 
 // create new app
 const app = express();
@@ -18,11 +17,14 @@ app.use(cors({origin: 'http://tuyaserver.herokuapp.com'}));
 → localhost:3000/items/ (this returns array of objects)
 → localhost:3000/items/:id (this returns single object)
 */
-app.use('/items', itemsRouter);
-app.use('/turnOn', itemsRouter);
 
-// default URL to API
-app.use('/', function(req, res) {
+let apiHead = { client_id: '9ea9sk54a0k2978837d6', access_token: '', sign: '', sign_method: 'HMAC-SHA256', t: 0};
+
+
+app.use('/init', function(req, res) {
+    const hmac1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d');
+    hmac1.update(apiHead[client_id]);
+    var t;
     http.get('http://now.zerynth.com/', (res2) => {
         const { statusCode } = res2;
         const contentType = res2.headers['content-type'];
@@ -31,7 +33,26 @@ app.use('/', function(req, res) {
         res2.on('data', (chunk) => { rawData += chunk; });
         res2.on('end', () => {
             try {
-              const parsedData = JSON.parse(rawData);
+              t = JSON.parse(rawData["now"]);
+            } catch (e) {
+              console.error(e.message);
+            }
+        });
+    });
+});
+
+// default URL to API
+app.use('/', function(req, res) {
+    res.send("Nothing to see here")
+    http.get('http://now.zerynth.com/', (res2) => {
+        const { statusCode } = res2;
+        const contentType = res2.headers['content-type'];
+        res2.setEncoding('utf8');
+        let rawData = '';
+        res2.on('data', (chunk) => { rawData += chunk; });
+        res2.on('end', () => {
+            try {
+              const parsedData = JSON.parse(rawData[now]);
               res.send(parsedData)
             } catch (e) {
               console.error(e.message);
