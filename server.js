@@ -18,12 +18,11 @@ app.use(cors({origin: 'http://tuyaserver.herokuapp.com'}));
 → localhost:3000/items/:id (this returns single object)
 */
 
-let apiHead = { client_id: '9ea9sk54a0k2978837d6', access_token: '', sign: '', sign_method: 'HMAC-SHA256', t: 0};
+let apiHead = { client_id: "9ea9sk54a0k2978837d6", access_token: "", sign: "", sign_method: "HMAC-SHA256", t: 0};
 
 
 app.use('/init', function(req, res) {
-    const hmac1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d');
-    hmac1.update(apiHead['client_id']);
+    var t;
     http.get('http://now.zerynth.com/', (res2) => {
         const { statusCode } = res2;
         const contentType = res2.headers['content-type'];
@@ -32,15 +31,14 @@ app.use('/init', function(req, res) {
         res2.on('data', (chunk) => { rawData += chunk; });
         res2.on('end', () => {
             try {
-              t = JSON.parse(rawData)['now']['epoch'];
+              t = (JSON.parse(rawData)['now']['epoch'] * 1000).toString().slice(0, 13);
             } catch (e) {
               console.error(e.message);
             }
         });
     });
+    signature = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex");
     apiHead['t'] = t;
-    hmac1.update(t)
-    signature = hmac1.digest('hex');
     apiHead['sign'] = signature;
     const options = {
         hostname: 'http://openapi.tuyaus.com',
