@@ -2,9 +2,21 @@
 const express = require('express');
 // create new router
 const router = express.Router();
+const crypto = require('crypto');
+const http = require('http')
 
+// devices = {'lights': ["64304636a4cf12d76aad", "55008855483fdac28931"]}
+// api = "http://openapi.tuyaus.com"
+// clientID = "9ea9sk54a0k2978837d6"
+// key = ""
+// #uid = "bay1603131270477PexJ"
+// sm = "HMAC-SHA256"
+// commandEnd = "/v1.0/devices/[id]/commands"
+// tokenEnd = "/v1.0/token"
+// statusEnd = "/v1.0/devices/[id]/status"
 // create a JSON data array
 let data = [
+    { client_id: '9ea9sk54a0k2978837d6', access_token: '', sign: '', sign_method: 'HMAC-SHA256', t: 0},
     { id: 1, title: 'Create a project',  order: 1, completed: true, createdOn: new Date() },
     { id: 2, title: 'Take a cofféé',     order: 2, completed: true, createdOn: new Date() },
     { id: 3, title: 'Write new article', order: 3, completed: true, createdOn: new Date() },
@@ -32,10 +44,30 @@ router.get('/:id', function (req, res) {
     }
 });
 
+
+router.get('/turnOn', function(req, res) {
+    http.get('http://now.zerynth.com/', (res) => {
+        const { statusCode } = res;
+        const contentType = res.headers['content-type'];
+        res.setEncoding('utf8');
+        let rawData = '';
+        res.on('data', (chunk) => { rawData += chunk; });
+        res.on('end', () => {
+            try {
+              const parsedData = JSON.parse(rawData);
+              res.status(200).JSON(parsedData)
+            } catch (e) {
+              console.error(e.message);
+            }
+        });
+    })
+}); 
+
+
 // CREATE
 // this api end-point add new object to item list
 // that is add new object to `data` array
-router.post('/', function (req, res) {
+router.post('/setup', function (req, res) {
     // get itemIds from data array
     let itemIds = data.map(item => item.id);
     // get orderNums from data array
