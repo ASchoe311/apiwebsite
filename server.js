@@ -48,7 +48,6 @@ var apiHead = { client_id: "9ea9sk54a0k2978837d6", access_token: "", sign: "", s
 var keyExpireTime = 0;
 var refreshToken;
 var brightness;
-var workingMode;
 
 const refreshAccessToken = () => {
     var t = Date.now();
