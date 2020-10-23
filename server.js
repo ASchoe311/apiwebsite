@@ -127,9 +127,7 @@ const initialize = () => {
 
 initialize();
 
-const router = express.Router();
-
-router.get('/onoff', function(req, res) {
+app.get('/onoff', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -164,10 +162,10 @@ router.get('/onoff', function(req, res) {
         }
         req2.end();
     }
-    res.status(200).json(results);
+    res.status(200).json({results: [{sucess: true}]});
 });
 
-router.get('/modechange', function(req, res) {
+app.get('/modechange', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -202,11 +200,11 @@ router.get('/modechange', function(req, res) {
         }
         req2.end();
     }
-    res.status(200).json(results);
+    res.status(200).json({results: [{sucess: true}]});
 });
 
 
-router.get('/brightup', function(req, res) {
+app.get('/brightup', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i){
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -243,10 +241,10 @@ router.get('/brightup', function(req, res) {
         req2.write(JSON.stringify(thisCommand));
         req2.end();
     }
-    res.status(200).json(results);
+    res.status(200).json({results: [{sucess: true}]});
 });
 
-router.get('/brightdown', function(req, res) {
+app.get('/brightdown', function(req, res) {
     var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -283,7 +281,7 @@ router.get('/brightdown', function(req, res) {
         req2.write(JSON.stringify(thisCommand));
         req2.end();
     }
-    res.status(200).json(results);
+    res.status(200).json({results: [{sucess: true}]});
 });
 
 // default URL to API
