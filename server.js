@@ -212,6 +212,14 @@ app.post('/brightup', function(req, res) {
     var results = [];
     let canChange = (brightness != 255 && devices['modes'][0] != "scene_4");
     if (canChange) {
+        let thisCommand = brightCommand;
+        if (brightness + 23 >= 255) {
+            thisCommand['commands'][0]['value'] = 255;
+            brightness = 255;
+        } else {
+            thisCommand['commands'][0]['value'] = brightness + 23;
+            brightness = brightness + 23;
+        }
         for (var i = 0; i < devices['lights'].length; ++i){
             var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
             let opts = {
@@ -239,14 +247,6 @@ app.post('/brightup', function(req, res) {
                     }
                 });
             });
-            let thisCommand = brightCommand;
-            if (brightness + 23 >= 255) {
-                thisCommand['commands'][0]['value'] = 255;
-                brightness = 255;
-            } else {
-                thisCommand['commands'][0]['value'] = brightness + 23;
-                brightness = brightness + 23;
-            }
             req2.write(JSON.stringify(thisCommand));
             req2.end();
         }
@@ -258,6 +258,14 @@ app.post('/brightdown', function(req, res) {
     var results = [];
     let canChange = (brightness != 25 && devices['modes'][0] != "scene_4");
     if (canChange) {
+        let thisCommand = brightCommand;
+        if (brightness - 23 <= 25) {
+            thisCommand['commands'][0]['value'] = 25;
+            brightness = 25;
+        } else {
+            thisCommand['commands'][0]['value'] = brightness - 23;
+            brightness = brightness - 23;
+        }
         for (var i = 0; i < devices['lights'].length; ++i) {
             var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
             let opts = {
@@ -285,14 +293,6 @@ app.post('/brightdown', function(req, res) {
                     }
                 });
             });
-            let thisCommand = brightCommand;
-            if (brightness - 23 <= 25) {
-                thisCommand['commands'][0]['value'] = 25;
-                brightness = 25;
-            } else {
-                thisCommand['commands'][0]['value'] = brightness - 23;
-                brightness = brightness - 23;
-            }
             req2.write(JSON.stringify(thisCommand));
             req2.end();
         }
