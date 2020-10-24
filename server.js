@@ -210,86 +210,92 @@ app.post('/modechange', function(req, res) {
 
 app.post('/brightup', function(req, res) {
     var results = [];
-    for (var i = 0; i < devices['lights'].length; ++i){
-        var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
-        let opts = {
-            hostname: 'openapi.tuyaus.com',
-            method: "POST",
-            path: commandEnd,
-            headers: apiHead
-        }
-        const req2 = https.request(opts, (res2) => {
-            const { statusCode } = res2;
-            const contentType = res2.headers['content-type'];
-            res2.setEncoding('utf8');
-            let rawData = '';
-            res2.on('data', (chunk) => { rawData += chunk; });
-            res2.on('end', () => {
-                try {
-                    let data = JSON.parse(rawData);
-                    if (data['success'] == false){
-                        refreshAccessToken();
+    let canChange = (brightness != 255 && devices['modes'][0] != "scene_4");
+    if (canChange) {
+        for (var i = 0; i < devices['lights'].length; ++i){
+            var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
+            let opts = {
+                hostname: 'openapi.tuyaus.com',
+                method: "POST",
+                path: commandEnd,
+                headers: apiHead
+            }
+            const req2 = https.request(opts, (res2) => {
+                const { statusCode } = res2;
+                const contentType = res2.headers['content-type'];
+                res2.setEncoding('utf8');
+                let rawData = '';
+                res2.on('data', (chunk) => { rawData += chunk; });
+                res2.on('end', () => {
+                    try {
+                        let data = JSON.parse(rawData);
+                        if (data['success'] == false){
+                            refreshAccessToken();
+                        }
+                        console.log(data);
+                        results.push(data);
+                    } catch (e) {
+                      console.error(e.message);
                     }
-                    console.log(data);
-                    results.push(data);
-                } catch (e) {
-                  console.error(e.message);
-                }
+                });
             });
-        });
-        let thisCommand = brightCommand;
-        if (brightness + 23 >= 255) {
-            thisCommand['commands'][0]['value'] = 255;
-            brightness = 255;
-        } else {
-            thisCommand['commands'][0]['value'] = brightness + 23;
-            brightness = brightness + 23;
+            let thisCommand = brightCommand;
+            if (brightness + 23 >= 255) {
+                thisCommand['commands'][0]['value'] = 255;
+                brightness = 255;
+            } else {
+                thisCommand['commands'][0]['value'] = brightness + 23;
+                brightness = brightness + 23;
+            }
+            req2.write(JSON.stringify(thisCommand));
+            req2.end();
         }
-        req2.write(JSON.stringify(thisCommand));
-        req2.end();
     }
     res.status(200).json({results: [{sucess: true}]});
 });
 
 app.post('/brightdown', function(req, res) {
     var results = [];
-    for (var i = 0; i < devices['lights'].length; ++i) {
-        var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
-        let opts = {
-            hostname: 'openapi.tuyaus.com',
-            method: "POST",
-            path: commandEnd,
-            headers: apiHead
-        }
-        const req2 = https.request(opts, (res2) => {
-            const { statusCode } = res2;
-            const contentType = res2.headers['content-type'];
-            res2.setEncoding('utf8');
-            let rawData = '';
-            res2.on('data', (chunk) => { rawData += chunk; });
-            res2.on('end', () => {
-                try {
-                    let data = JSON.parse(rawData);
-                    if (data['success'] == false){
-                        refreshAccessToken();
+    let canChange = (brightness != 25 && devices['modes'][0] != "scene_4");
+    if (canChange) {
+        for (var i = 0; i < devices['lights'].length; ++i) {
+            var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
+            let opts = {
+                hostname: 'openapi.tuyaus.com',
+                method: "POST",
+                path: commandEnd,
+                headers: apiHead
+            }
+            const req2 = https.request(opts, (res2) => {
+                const { statusCode } = res2;
+                const contentType = res2.headers['content-type'];
+                res2.setEncoding('utf8');
+                let rawData = '';
+                res2.on('data', (chunk) => { rawData += chunk; });
+                res2.on('end', () => {
+                    try {
+                        let data = JSON.parse(rawData);
+                        if (data['success'] == false){
+                            refreshAccessToken();
+                        }
+                        console.log(data);
+                        results.push(data);
+                    } catch (e) {
+                      console.error(e.message);
                     }
-                    console.log(data);
-                    results.push(data);
-                } catch (e) {
-                  console.error(e.message);
-                }
+                });
             });
-        });
-        let thisCommand = brightCommand;
-        if (brightness - 23 <= 25) {
-            thisCommand['commands'][0]['value'] = 25;
-            brightness = 25;
-        } else {
-            thisCommand['commands'][0]['value'] = brightness - 23;
-            brightness = brightness - 23;
+            let thisCommand = brightCommand;
+            if (brightness - 23 <= 25) {
+                thisCommand['commands'][0]['value'] = 25;
+                brightness = 25;
+            } else {
+                thisCommand['commands'][0]['value'] = brightness - 23;
+                brightness = brightness - 23;
+            }
+            req2.write(JSON.stringify(thisCommand));
+            req2.end();
         }
-        req2.write(JSON.stringify(thisCommand));
-        req2.end();
     }
     res.status(200).json({results: [{sucess: true}]});
 });
