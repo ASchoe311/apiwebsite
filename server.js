@@ -69,7 +69,7 @@ const refreshAccessToken = () => {
             const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
             apiHead.t = t;
             apiHead.sign = signature2;
-            setTimeout(refreshAccessToken, 7200000);
+            setInterval(refreshAccessToken, 7200000);
         })
         .catch((error) => {console.log(error)});
 };
@@ -119,7 +119,6 @@ const initialize = () => {
                     }
                 });
             });
-            setTimeout(refreshAccessToken, keyExpireTime * 1000);
         })
         .catch((error) => {console.log(error)});
 }
