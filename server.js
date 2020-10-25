@@ -348,6 +348,10 @@ app.get('/site', function(req, res) {
     res.sendFile(path.join(__dirname+'/express/index.html'));
 });
 
+app.get('*', function(req, res){
+    res.send('I think you\'re lost...', 404);
+});
+
 const server = http.createServer(app);
 const port = process.env.PORT || 8080;
 server.listen(port);
