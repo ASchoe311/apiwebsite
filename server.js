@@ -170,7 +170,7 @@ app.post('/onoff', function(req, res) {
         }
         req2.end();
     }
-    res.status(200).json({results: [{sucess: true}]});
+    res.status(200).json({command: "on/off", results: {sucess: true, changed_to: devices['vals'][0]}});
 });
 
 app.post('/modechange', function(req, res) {
@@ -215,7 +215,7 @@ app.post('/modechange', function(req, res) {
         }
         req2.end();
     }
-    res.status(200).json({results: [{sucess: true}]});
+    res.status(200).json({command: "changeMode", results: {sucess: true, changed_to: devices['modes'][0]}});
 });
 
 
@@ -265,7 +265,7 @@ app.post('/brightup', function(req, res) {
             req2.end();
         }
     }
-    res.status(200).json({results: [{sucess: true}]});
+    res.status(200).json({command: "brightnessUp", results: {sucess: true, changed_to: brightness}});
 });
 
 app.post('/brightdown', function(req, res) {
@@ -315,18 +315,18 @@ app.post('/brightdown', function(req, res) {
             req2.end();
         }
     }
-    res.status(200).json({results: [{sucess: true}]});
+    res.status(200).json({command: "brightnessDown", results: {sucess: true, changed_to: brightness}});
 });
 
 // default URL to API
 app.get('/keepalive', function(req, res) {
     console.log("STAYING ALIVE, STAYING ALIVE");
-    res.status(200).json({results: [{sucess: true}]});
+    res.status(200).json({command: "keepAlive", results: {sucess: true}});
 });
 
 app.post('/newtoken', function(req, res) {
     refreshAccessToken(refreshToken);
-    res.status(200).json({results: [{sucess: true}]});
+    res.status(200).json({command: "newToken", results: {sucess: true}});
 });
 
 // default URL to API
