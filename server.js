@@ -170,7 +170,7 @@ app.post('/onoff', function(req, res) {
         }
         req2.end();
     }
-    console.log(JSON.parse({command: "on/off", results: {sucess: true, changed_to: devices['vals'][0]}}));
+    console.log(JSON.stringify({command: "on/off", results: {sucess: true, changed_to: devices['vals'][0]}}));
     res.status(200).json({command: "on/off", results: {sucess: true, changed_to: devices['vals'][0]}});
 });
 
@@ -216,7 +216,7 @@ app.post('/modechange', function(req, res) {
         }
         req2.end();
     }
-    console.log(JSON.parse({command: "changeMode", results: {sucess: true, changed_to: devices['modes'][0]}}));
+    console.log(JSON.stringify({command: "changeMode", results: {sucess: true, changed_to: devices['modes'][0]}}));
     res.status(200).json({command: "changeMode", results: {sucess: true, changed_to: devices['modes'][0]}});
 });
 
@@ -267,7 +267,7 @@ app.post('/brightup', function(req, res) {
             req2.end();
         }
     }
-    console.log(JSON.parse({command: "brightnessUp", results: {sucess: true, changed_to: brightness}}));
+    console.log(JSON.stringify({command: "brightnessUp", results: {sucess: true, changed_to: brightness}}));
     res.status(200).json({command: "brightnessUp", results: {sucess: true, changed_to: brightness}});
 });
 
@@ -318,7 +318,7 @@ app.post('/brightdown', function(req, res) {
             req2.end();
         }
     }
-    console.log(JSON.parse({command: "brightnessDown", results: {sucess: true, changed_to: brightness}}));
+    console.log(JSON.stringify({command: "brightnessDown", results: {sucess: true, changed_to: brightness}}));
     res.status(200).json({command: "brightnessDown", results: {sucess: true, changed_to: brightness}});
 });
 
