@@ -89,6 +89,7 @@ const initialize = () => {
             apiHead.access_token = data['result']['access_token'];
             keyExpireTime = data['result']['expire_time'];
             refreshToken = data['result']['refresh_token'];
+            clearTimeout()
             setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken);
             console.log(apiHead);
             t = Date.now();
@@ -147,6 +148,7 @@ app.post('/onoff', function(req, res) {
                 try {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
+                        clearTimeout();
                         let newHead = refreshAccessToken(refreshToken);
                         req2.setHeader('access_token', newHead[0]);
                         req2.setHeader('sign', newHead[1]);
@@ -191,6 +193,7 @@ app.post('/modechange', function(req, res) {
                 try {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
+                        clearTimeout();
                         let newHead = refreshAccessToken(refreshToken);
                         req2.setHeader('access_token', newHead[0]);
                         req2.setHeader('sign', newHead[1]);
@@ -218,8 +221,7 @@ app.post('/modechange', function(req, res) {
 
 app.post('/brightup', function(req, res) {
     var results = [];
-    let canChange = (brightness != 255 && devices['modes'][0] != "scene_4");
-    if (canChange) {
+    if (brightness != 255 && devices['modes'][0] != "scene_4") {
         let thisCommand = brightCommand;
         if (brightness + 23 >= 255) {
             thisCommand['commands'][0]['value'] = 255;
@@ -246,6 +248,7 @@ app.post('/brightup', function(req, res) {
                     try {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
+                            clearTimeout();
                             let newHead = refreshAccessToken(refreshToken);
                             req2.setHeader('access_token', newHead[0]);
                             req2.setHeader('sign', newHead[1]);
@@ -295,6 +298,7 @@ app.post('/brightdown', function(req, res) {
                     try {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
+                            clearTimeout();
                             let newHead = refreshAccessToken(refreshToken);
                             req2.setHeader('access_token', newHead[0]);
                             req2.setHeader('sign', newHead[1]);
@@ -315,8 +319,14 @@ app.post('/brightdown', function(req, res) {
 });
 
 // default URL to API
+app.get('/keepalive', function(req, res) {
+    console.log("STAYING ALIVE, STAYING ALIVE");
+    res.status(200).send("Success");
+});
+
+// default URL to API
 app.use('/', function(req, res) {
-    res.send("Nothing to see here")
+    res.send("Nothing to see here");
 });
 
 const server = http.createServer(app);
