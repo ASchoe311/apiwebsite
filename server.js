@@ -64,11 +64,11 @@ const refreshAccessToken = (rt) => {
             apiHead.access_token = data['result']['access_token'];
             keyExpireTime = data['result']['expire_time'];
             refreshToken = data['result']['refresh_token'];
-            console.log(apiHead);
             t = Date.now();
             const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
             apiHead.t = t;
             apiHead.sign = signature2;
+            console.log(apiHead);
             // setTimeout(refreshAccessToken, 7200000, refreshToken);
             return [data['result']['access_token'], signature2, t];
         })
@@ -91,11 +91,11 @@ const initialize = () => {
             refreshToken = data['result']['refresh_token'];
             // clearTimeout()
             // setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken);
-            console.log(apiHead);
             t = Date.now();
             const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
             apiHead.t = t;
             apiHead.sign = signature2;
+            console.log(apiHead);
             let opts = {
                 hostname: 'openapi.tuyaus.com',
                 path: '/v1.0/devices/64304636a4cf12d76aad/status',
@@ -110,7 +110,7 @@ const initialize = () => {
                 res2.on('end', () => {
                     try {
                         let data = JSON.parse(rawData);
-                        console.log(data)
+                        // console.log(data)
                         brightness = data['result'][2]['value']
                         devices['vals'][0] = data['result'][0]['value']
                         devices['vals'][1] = data['result'][0]['value']
