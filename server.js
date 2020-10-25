@@ -62,6 +62,7 @@ const refreshAccessToken = (rt) => {
     })
         .then((response) => response.json())
         .then((data) => {
+            console.log(apiHead);
             console.log(data);
             apiHead.access_token = data['result']['access_token'];
             keyExpireTime = data['result']['expire_time'];
