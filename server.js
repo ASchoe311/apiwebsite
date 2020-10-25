@@ -246,6 +246,7 @@ app.post('/brightup', function(req, res) {
                 res2.on('data', (chunk) => { rawData += chunk; });
                 res2.on('end', () => {
                     try {
+                        req2.write(JSON.stringify(thisCommand));
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
                             // clearTimeout();
@@ -261,7 +262,6 @@ app.post('/brightup', function(req, res) {
                     }
                 });
             });
-            req2.write(JSON.stringify(thisCommand));
             req2.end();
         }
     }
