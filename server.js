@@ -340,7 +340,7 @@ app.post('/newtoken', function(req, res) {
 
 // default URL to API
 app.use('/', function(req, res) {
-    res.sendFile(path.join(__dirname+'/express/index.html'));
+    res.send("Nothing to see here");
 });
 
 app.get('/site', function(req, res) {
