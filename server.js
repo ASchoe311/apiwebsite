@@ -343,7 +343,7 @@ app.use('/', function(req, res) {
     res.sendFile(path.join(__dirname+'/express/index.html'));
 });
 
-app.use('/site', function(req, res) {
+app.get('/site', function(req, res) {
     res.sendFile(path.join(__dirname+'/express/index.html'));
 });
 
