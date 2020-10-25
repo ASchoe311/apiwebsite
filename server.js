@@ -69,8 +69,8 @@ const refreshAccessToken = (rt) => {
             const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
             apiHead.t = t;
             apiHead.sign = signature2;
-            setTimeout(refreshAccessToken, 7200000, refreshToken);
-            return [data['result']['access_token'], signature2, t];
+            // setTimeout(refreshAccessToken, 7200000, refreshToken);
+            // return [data['result']['access_token'], signature2, t];
         })
         .catch((error) => {console.log(error)});
 };
@@ -89,8 +89,11 @@ const initialize = () => {
             apiHead.access_token = data['result']['access_token'];
             keyExpireTime = data['result']['expire_time'];
             refreshToken = data['result']['refresh_token'];
-            clearTimeout()
-            setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken);
+            // clearTimeout()
+            // setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken);
+            if (keyExpireTime != 7200) {
+                refreshAccessToken(refreshToken);
+            }
             console.log(apiHead);
             t = Date.now();
             const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
@@ -147,13 +150,13 @@ app.post('/onoff', function(req, res) {
             res2.on('end', () => {
                 try {
                     let data = JSON.parse(rawData);
-                    if (data['success'] == false){
-                        clearTimeout();
-                        let newHead = refreshAccessToken(refreshToken);
-                        req2.setHeader('access_token', newHead[0]);
-                        req2.setHeader('sign', newHead[1]);
-                        req2.setHeader('t', newHead[2]);
-                    }
+                    // if (data['success'] == false){
+                    //     clearTimeout();
+                    //     let newHead = refreshAccessToken(refreshToken);
+                    //     req2.setHeader('access_token', newHead[0]);
+                    //     req2.setHeader('sign', newHead[1]);
+                    //     req2.setHeader('t', newHead[2]);
+                    // }
                     console.log(data);
                     results.push(data);
                 } catch (e) {
@@ -192,13 +195,13 @@ app.post('/modechange', function(req, res) {
             res2.on('end', () => {
                 try {
                     let data = JSON.parse(rawData);
-                    if (data['success'] == false){
-                        clearTimeout();
-                        let newHead = refreshAccessToken(refreshToken);
-                        req2.setHeader('access_token', newHead[0]);
-                        req2.setHeader('sign', newHead[1]);
-                        req2.setHeader('t', newHead[2]);
-                    }
+                    // if (data['success'] == false){
+                    //     clearTimeout();
+                    //     let newHead = refreshAccessToken(refreshToken);
+                    //     req2.setHeader('access_token', newHead[0]);
+                    //     req2.setHeader('sign', newHead[1]);
+                    //     req2.setHeader('t', newHead[2]);
+                    // }
                     console.log(data);
                     results.push(data);
                 } catch (e) {
@@ -247,13 +250,13 @@ app.post('/brightup', function(req, res) {
                 res2.on('end', () => {
                     try {
                         let data = JSON.parse(rawData);
-                        if (data['success'] == false){
-                            clearTimeout();
-                            let newHead = refreshAccessToken(refreshToken);
-                            req2.setHeader('access_token', newHead[0]);
-                            req2.setHeader('sign', newHead[1]);
-                            req2.setHeader('t', newHead[2]);
-                        }
+                        // if (data['success'] == false){
+                        //     clearTimeout();
+                        //     let newHead = refreshAccessToken(refreshToken);
+                        //     req2.setHeader('access_token', newHead[0]);
+                        //     req2.setHeader('sign', newHead[1]);
+                        //     req2.setHeader('t', newHead[2]);
+                        // }
                         console.log(data);
                         results.push(data);
                     } catch (e) {
@@ -297,13 +300,13 @@ app.post('/brightdown', function(req, res) {
                 res2.on('end', () => {
                     try {
                         let data = JSON.parse(rawData);
-                        if (data['success'] == false){
-                            clearTimeout();
-                            let newHead = refreshAccessToken(refreshToken);
-                            req2.setHeader('access_token', newHead[0]);
-                            req2.setHeader('sign', newHead[1]);
-                            req2.setHeader('t', newHead[2]);
-                        }
+                        // if (data['success'] == false){
+                        //     clearTimeout();
+                        //     let newHead = refreshAccessToken(refreshToken);
+                        //     req2.setHeader('access_token', newHead[0]);
+                        //     req2.setHeader('sign', newHead[1]);
+                        //     req2.setHeader('t', newHead[2]);
+                        // }
                         console.log(data);
                         results.push(data);
                     } catch (e) {
@@ -321,7 +324,12 @@ app.post('/brightdown', function(req, res) {
 // default URL to API
 app.get('/keepalive', function(req, res) {
     console.log("STAYING ALIVE, STAYING ALIVE");
-    res.status(200).send("Success");
+    res.status(200).json({results: [{sucess: true}]});
+});
+
+app.post('/newtoken', function(req, res) {
+    refreshAccessToken(refreshToken);
+    res.status(200).json({results: [{sucess: true}]});
 });
 
 // default URL to API
