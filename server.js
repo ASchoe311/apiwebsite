@@ -349,7 +349,7 @@ app.get('/site', function(req, res) {
 });
 
 app.get('*', function(req, res){
-    res.send('I think you\'re lost...', 404);
+    res.status(404).send('I think you\'re lost...');
 });
 
 const server = http.createServer(app);
