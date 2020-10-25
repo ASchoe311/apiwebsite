@@ -152,7 +152,9 @@ app.post('/onoff', function(req, res) {
                     if (data['success'] == false){
                         // clearTimeout();
                         let newHead = refreshAccessToken(refreshToken);
-                        break;
+                        req2.setHeader('access_token', newHead[0]);
+                        req2.setHeader('sign', newHead[1]);
+                        req2.setHeader('t', newHead[2]);
                     }
                     console.log(data);
                     results.push(data);
