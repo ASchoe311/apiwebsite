@@ -10,7 +10,7 @@ const path = require('path');
 // create new app
 const app = express();
 app.use(express.json());
-app.use(express.static("express"));
+// app.use(express.static("express"));
 // use it before all route definitions
 // allowing below URL to access these APIs end-points
 // you can replace this URL(http://localhost:8100) with your
