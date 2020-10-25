@@ -148,7 +148,7 @@ app.post('/onoff', function(req, res) {
                 try {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
-                        clearTimeout();
+                        // clearTimeout();
                         let newHead = refreshAccessToken(refreshToken);
                         req2.setHeader('access_token', newHead[0]);
                         req2.setHeader('sign', newHead[1]);
@@ -193,7 +193,7 @@ app.post('/modechange', function(req, res) {
                 try {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
-                        clearTimeout();
+                        // clearTimeout();
                         let newHead = refreshAccessToken(refreshToken);
                         req2.setHeader('access_token', newHead[0]);
                         req2.setHeader('sign', newHead[1]);
@@ -248,7 +248,7 @@ app.post('/brightup', function(req, res) {
                     try {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
-                            clearTimeout();
+                            // clearTimeout();
                             let newHead = refreshAccessToken(refreshToken);
                             req2.setHeader('access_token', newHead[0]);
                             req2.setHeader('sign', newHead[1]);
@@ -298,7 +298,7 @@ app.post('/brightdown', function(req, res) {
                     try {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
-                            clearTimeout();
+                            // clearTimeout();
                             let newHead = refreshAccessToken(refreshToken);
                             req2.setHeader('access_token', newHead[0]);
                             req2.setHeader('sign', newHead[1]);
