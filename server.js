@@ -340,7 +340,7 @@ app.post('/newtoken', function(req, res) {
 });
 
 // default URL to API
-app.use('/', function(req, res) {
+app.get('/', function(req, res) {
     res.send("Nothing to see here");
 });
 
