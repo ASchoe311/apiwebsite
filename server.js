@@ -342,6 +342,10 @@ app.use('/', function(req, res) {
     res.send("Nothing to see here");
 });
 
+app.use('/site', function(req, res) {
+    res.sendFile(path.join(__dirname+'/express/index.html'));
+});
+
 const server = http.createServer(app);
 const port = process.env.PORT || 8080;
 server.listen(port);
