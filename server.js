@@ -179,7 +179,7 @@ app.post('/onoff', async function(req, res) {
                             apiHead.sign = signature1;
                             let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
                             try{
-                                let response = fetch(refreshPath, {headers: apiHead});
+                                let response = await fetch(refreshPath, {headers: apiHead});
                                 let data = await response.json();
                                 console.log(data);
                                 console.log(apiHead);
