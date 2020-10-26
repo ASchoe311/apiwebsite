@@ -196,21 +196,21 @@ app.post('/onoff', async function(req, res) {
                             } catch (e) {
                                 console.error(e.message);
                             }
-                            if (result == true) {
-                                if (devices['vals'][i] == true) {
-                                    req2.write(offCommand);
-                                    devices['vals'][i] = false;
-                                } else {
-                                    req2.write(onCommand);
-                                    devices['vals'][i] = true;
-                                }
-                            }
-                            req2.end();
-                         })();
+                        })();
                     }
                 } catch (e) {
                     console.error(e.message);
                 }
+                if (result == true) {
+                    if (devices['vals'][i] == true) {
+                        req2.write(offCommand);
+                        devices['vals'][i] = false;
+                    } else {
+                        req2.write(onCommand);
+                        devices['vals'][i] = true;
+                    }
+                }
+                req2.end();
             });
         });
     }
