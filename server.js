@@ -172,6 +172,7 @@ app.post('/onoff', async function(req, res) {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
                             (async() => {
+                                let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
                                 let response = await fetch(refreshPath, {headers: apiHead});
                                 let data = await response.json();
                                 console.log(data);
@@ -232,6 +233,7 @@ app.post('/modechange', async function(req, res) {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
                         (async() => {
+                            let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
                             let response = await fetch(refreshPath, {headers: apiHead});
                             let data = await response.json();
                             console.log(data);
@@ -303,6 +305,7 @@ app.post('/brightup', async function(req, res) {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
                             (async() => {
+                                let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
                                 let response = await fetch(refreshPath, {headers: apiHead});
                                 let data = await response.json();
                                 console.log(data);
@@ -369,6 +372,7 @@ app.post('/brightdown', async function(req, res) {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
                             (async() => {
+                                let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
                                 let response = await fetch(refreshPath, {headers: apiHead});
                                 let data = await response.json();
                                 console.log(data);
