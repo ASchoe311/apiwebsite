@@ -182,16 +182,18 @@ app.post('/onoff', async function(req, res) {
                             try{
                                 let response = await fetch(refreshPath, {headers: apiHead});
                                 let data = await response.json();
-                                console.log(data);
-                                console.log(apiHead);
-                                apiHead.access_token = data['result']['access_token'];
-                                keyExpireTime = data['result']['expire_time'];
-                                refreshToken = data['result']['refresh_token'];
-                                t = Date.now();
-                                const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
-                                apiHead.t = t;
-                                apiHead.sign = signature2;
-                                console.log(apiHead);
+                                if (data['success'] == true) {
+                                    console.log(data);
+                                    console.log(apiHead);
+                                    apiHead.access_token = data['result']['access_token'];
+                                    keyExpireTime = data['result']['expire_time'];
+                                    refreshToken = data['result']['refresh_token'];
+                                    t = Date.now();
+                                    const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                                    apiHead.t = t;
+                                    apiHead.sign = signature2;
+                                    console.log(apiHead);
+                                }
                                 // clearTimeout();
                             } catch (e) {
                                 console.error(e.message);
