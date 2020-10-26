@@ -184,7 +184,6 @@ app.post('/onoff', function(req, res) {
 });
 
 app.post('/modechange', function(req, res) {
-    var results = [];
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
         let opts = {
@@ -210,7 +209,6 @@ app.post('/modechange', function(req, res) {
                         req2.setHeader('t', newHead[2]);
                     }
                     console.log(data);
-                    results.push(data);
                 } catch (e) {
                   console.error(e.message);
                 }
@@ -232,7 +230,7 @@ app.post('/modechange', function(req, res) {
 
 
 app.post('/brightup', function(req, res) {
-    var results = [];
+    let oldBrightness = brightness;
     if (brightness != 255 && devices['modes'][0] != "scene_4") {
         let thisCommand = brightCommand;
         if (brightness + 23 >= 255) {
@@ -267,7 +265,6 @@ app.post('/brightup', function(req, res) {
                             req2.setHeader('t', newHead[2]);
                         }
                         console.log(data);
-                        results.push(data);
                     } catch (e) {
                       console.error(e.message);
                     }
@@ -277,13 +274,13 @@ app.post('/brightup', function(req, res) {
             req2.end();
         }
     }
-    let commandLineOut = "Brightness changed to " + brightness
+    let commandLineOut = (brightness == oldBrightness ? "Brightness unchanged" : "Brightness changed to " + brightness);
     console.log(commandLineOut);
     res.status(200).json({command: "brightnessUp", results: {sucess: true, changed_to: brightness}});
 });
 
 app.post('/brightdown', function(req, res) {
-    var results = [];
+    let oldBrightness = brightness;
     let canChange = (brightness != 25 && devices['modes'][0] != "scene_4");
     if (canChange) {
         let thisCommand = brightCommand;
@@ -319,7 +316,6 @@ app.post('/brightdown', function(req, res) {
                             req2.setHeader('t', newHead[2]);
                         }
                         console.log(data);
-                        results.push(data);
                     } catch (e) {
                       console.error(e.message);
                     }
@@ -329,12 +325,11 @@ app.post('/brightdown', function(req, res) {
             req2.end();
         }
     }
-    let commandLineOut = "Brightness changed to " + brightness
+    let commandLineOut = (brightness == oldBrightness ? "Brightness unchanged" : "Brightness changed to " + brightness);
     console.log(commandLineOut);
     res.status(200).json({command: "brightnessDown", results: {sucess: true, changed_to: brightness}});
 });
 
-// default URL to API
 app.get('/keepalive', function(req, res) {
     console.log("STAYING ALIVE, STAYING ALIVE");
     res.status(200).json({command: "keepAlive", results: {sucess: true}});
