@@ -94,7 +94,7 @@ const initialize = () => {
             console.log(data);
             apiHead.access_token = data['result']['access_token'];
             keyExpireTime = data['result']['expire_time'];
-            refreshToken = "sff" //data['result']['refresh_token'];
+            refreshToken = data['result']['refresh_token'];
             accessTokenInterval = setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken)
             // setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken);
             t = Date.now();
@@ -128,6 +128,7 @@ const initialize = () => {
                     }
                 });
             });
+            apiHead.access_token = "badaccesstoken";
         })
         .catch((error) => {console.log(error)});
 }
