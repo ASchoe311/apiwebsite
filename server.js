@@ -203,7 +203,7 @@ app.post('/onoff', async function(req, res) {
                     }
             });
         });
-        if (result == true) {break;}
+        if (result == false) {break;}
         if (devices['vals'][i] == true) {
             req2.write(offCommand);
             devices['vals'][i] = false;
