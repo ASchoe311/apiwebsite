@@ -246,24 +246,25 @@ app.post('/modechange', async function(req, res) {
                             keyGetTime = t;
                             apiHead.sign = signature1;
                             let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
-                            let response = await fetch(refreshPath, {headers: apiHead});
-                            let data = await response.json();
-                            console.log(data);
-                            console.log(apiHead);
-                            apiHead.access_token = data['result']['access_token'];
-                            keyExpireTime = data['result']['expire_time'];
-                            refreshToken = data['result']['refresh_token'];
-                            t = Date.now();
-                            const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
-                            apiHead.t = t;
-                            apiHead.sign = signature2;
-                            console.log(apiHead);
-                            // clearTimeout();
-                            // result = false;
-                            // let newHead = refreshAccessToken(refreshToken);
-                            req2.setHeader('access_token', apiHead.access_token);
-                            req2.setHeader('sign', apiHead.sign);
-                            req2.setHeader('t', apiHead.t);
+                            try{
+                                let response = await fetch(refreshPath, {headers: apiHead});
+                                let data = await response.json();
+                                if (data['success'] == true) {
+                                    console.log(data);
+                                    console.log(apiHead);
+                                    apiHead.access_token = data['result']['access_token'];
+                                    keyExpireTime = data['result']['expire_time'];
+                                    refreshToken = data['result']['refresh_token'];
+                                    t = Date.now();
+                                    const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                                    apiHead.t = t;
+                                    apiHead.sign = signature2;
+                                    console.log(apiHead);
+                                }
+                                // clearTimeout();
+                            } catch (e) {
+                                console.error(e.message);
+                            }
                         })();
                     }
                 } catch (e) {
@@ -322,24 +323,25 @@ app.post('/brightup', async function(req, res) {
                                 keyGetTime = t;
                                 apiHead.sign = signature1;
                                 let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
-                                let response = await fetch(refreshPath, {headers: apiHead});
-                                let data = await response.json();
-                                console.log(data);
-                                console.log(apiHead);
-                                apiHead.access_token = data['result']['access_token'];
-                                keyExpireTime = data['result']['expire_time'];
-                                refreshToken = data['result']['refresh_token'];
-                                t = Date.now();
-                                const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
-                                apiHead.t = t;
-                                apiHead.sign = signature2;
-                                console.log(apiHead);
-                                // clearTimeout();
-                                // result = false;
-                                // let newHead = refreshAccessToken(refreshToken);
-                                req2.setHeader('access_token', apiHead.access_token);
-                                req2.setHeader('sign', apiHead.sign);
-                                req2.setHeader('t', apiHead.t);
+                                try{
+                                    let response = await fetch(refreshPath, {headers: apiHead});
+                                    let data = await response.json();
+                                    if (data['success'] == true) {
+                                        console.log(data);
+                                        console.log(apiHead);
+                                        apiHead.access_token = data['result']['access_token'];
+                                        keyExpireTime = data['result']['expire_time'];
+                                        refreshToken = data['result']['refresh_token'];
+                                        t = Date.now();
+                                        const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                                        apiHead.t = t;
+                                        apiHead.sign = signature2;
+                                        console.log(apiHead);
+                                    }
+                                    // clearTimeout();
+                                } catch (e) {
+                                    console.error(e.message);
+                                }
                             })();
                         }
                     } catch (e) {
@@ -393,24 +395,25 @@ app.post('/brightdown', async function(req, res) {
                                 keyGetTime = t;
                                 apiHead.sign = signature1;
                                 let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
-                                let response = await fetch(refreshPath, {headers: apiHead});
-                                let data = await response.json();
-                                console.log(data);
-                                console.log(apiHead);
-                                apiHead.access_token = data['result']['access_token'];
-                                keyExpireTime = data['result']['expire_time'];
-                                refreshToken = data['result']['refresh_token'];
-                                t = Date.now();
-                                const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
-                                apiHead.t = t;
-                                apiHead.sign = signature2;
-                                console.log(apiHead);
-                                // clearTimeout();
-                                // result = false;
-                                // let newHead = refreshAccessToken(refreshToken);
-                                req2.setHeader('access_token', apiHead.access_token);
-                                req2.setHeader('sign', apiHead.sign);
-                                req2.setHeader('t', apiHead.t);
+                                try{
+                                    let response = await fetch(refreshPath, {headers: apiHead});
+                                    let data = await response.json();
+                                    if (data['success'] == true) {
+                                        console.log(data);
+                                        console.log(apiHead);
+                                        apiHead.access_token = data['result']['access_token'];
+                                        keyExpireTime = data['result']['expire_time'];
+                                        refreshToken = data['result']['refresh_token'];
+                                        t = Date.now();
+                                        const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                                        apiHead.t = t;
+                                        apiHead.sign = signature2;
+                                        console.log(apiHead);
+                                    }
+                                    // clearTimeout();
+                                } catch (e) {
+                                    console.error(e.message);
+                                }
                             })();
                         }
                     } catch (e) {
