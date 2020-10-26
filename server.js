@@ -171,6 +171,7 @@ app.post('/onoff', async function(req, res) {
                 try {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
+                        result = false;
                         (async() => {
                             var t = Date.now();
                             const signature1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
@@ -192,7 +193,6 @@ app.post('/onoff', async function(req, res) {
                                 apiHead.sign = signature2;
                                 console.log(apiHead);
                                 // clearTimeout();
-                                result = false;
                             } catch (e) {
                                 console.error(e.message);
                             }
