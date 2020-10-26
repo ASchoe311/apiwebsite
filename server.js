@@ -336,7 +336,7 @@ app.get('/keepalive', function(req, res) {
 });
 
 app.post('/newtoken', function(req, res) {
-    refreshAccessToken(refreshToken);
+    //refreshAccessToken(refreshToken);
     res.status(200).json({command: "newToken", results: {sucess: true}});
 });
 
