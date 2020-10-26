@@ -191,11 +191,11 @@ app.post('/onoff', async function(req, res) {
                             apiHead.sign = signature2;
                             console.log(apiHead);
                             // clearTimeout();
-                            // result = false;
+                            result = false;
                             // let newHead = refreshAccessToken(refreshToken);
-                            req2.setHeader('access_token', apiHead.access_token);
-                            req2.setHeader('sign', apiHead.sign);
-                            req2.setHeader('t', apiHead.t);
+                            // req2.setHeader('access_token', apiHead.access_token);
+                            // req2.setHeader('sign', apiHead.sign);
+                            // req2.setHeader('t', apiHead.t);
                          })();
                     }
                     } catch (e) {
@@ -203,6 +203,7 @@ app.post('/onoff', async function(req, res) {
                     }
             });
         });
+        if (result == false) {break;}
         if (devices['vals'][i] == true) {
             req2.write(offCommand);
             devices['vals'][i] = false;
