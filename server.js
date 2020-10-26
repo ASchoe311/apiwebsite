@@ -152,7 +152,7 @@ app.post('/onoff', function(req, res) {
             res2.on('data', (chunk) => { rawData += chunk; });
             res2.on('end', () => {
                 try {
-                    let data = JSON.parse(rawData);
+                    var data = JSON.parse(rawData);
                     if (data['success'] == false){
                         // clearTimeout();
                         let newHead = refreshAccessToken(refreshToken);
@@ -167,12 +167,14 @@ app.post('/onoff', function(req, res) {
                 }
             });
         });
-        if (devices['vals'][i] == true) {
-            req2.write(offCommand);
-            devices['vals'][i] = false;
-        } else {
-            req2.write(onCommand);
-            devices['vals'][i] = true;
+        if (data['success'] == false) {
+            if (devices['vals'][i] == true) {
+                req2.write(offCommand);
+                devices['vals'][i] = false;
+            } else {
+                req2.write(onCommand);
+                devices['vals'][i] = true;
+            }
         }
         req2.end();
     }
