@@ -129,6 +129,7 @@ const initialize = () => {
                 });
             });
             apiHead.access_token = "badaccesstoken";
+            console.log(apiHead);
         })
         .catch((error) => {console.log(error)});
 }
