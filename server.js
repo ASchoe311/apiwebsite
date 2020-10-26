@@ -429,6 +429,12 @@ app.get('/keepalive', function(req, res) {
     res.status(200).json({command: "keepAlive", results: {sucess: true}});
 });
 
+
+app.post('/newtoken', function(req, res) {
+    //refreshAccessToken(refreshToken);
+    res.status(200).json({command: "newToken", results: {sucess: true}});
+});
+
 app.get('/messup', function(req, res) {
     console.log("Messing up...");
     console.log(apiHead);
@@ -438,9 +444,8 @@ app.get('/messup', function(req, res) {
     res.status(200).json({command: "keepAlive", results: {sucess: true}});
 })
 
-app.post('/newtoken', function(req, res) {
-    //refreshAccessToken(refreshToken);
-    res.status(200).json({command: "newToken", results: {sucess: true}});
+app.get('/site', function(req, res) {
+    res.sendFile(path.join(__dirname+'/express/index.html'));
 });
 
 // default URL to API
@@ -448,9 +453,6 @@ app.get('/', function(req, res) {
     res.send("Nothing to see here");
 });
 
-app.get('/site', function(req, res) {
-    res.sendFile(path.join(__dirname+'/express/index.html'));
-});
 
 app.get('*', function(req, res){
     res.status(404).send('I think you\'re lost...');
