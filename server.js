@@ -167,7 +167,7 @@ app.post('/onoff', function(req, res) {
                 }
             });
         });
-        if (data['success'] == false) {
+        if (data['success'] != false) {
             if (devices['vals'][i] == true) {
                 req2.write(offCommand);
                 devices['vals'][i] = false;
