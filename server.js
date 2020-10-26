@@ -206,13 +206,13 @@ app.post('/onoff', async function(req, res) {
         if (result == false) {break;}
         if (devices['vals'][i] == true) {
             req2.write(offCommand);
-            devices['vals'][i] = false;
         } else {
             req2.write(onCommand);
-            devices['vals'][i] = true;
         }
         req2.end();
     }
+    devices['vals'][0] = !devices[vals][0];
+    devices['vals'][1] = !devices[vals][1];
     let commandLineOut = "Turned lights " + (devices['vals'][0] == true ? "on" : "off");
     console.log(commandLineOut);
     res.status(200).json({command: "on/off", results: {sucess: true, changed_to: devices['vals'][0]}});
