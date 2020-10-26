@@ -135,7 +135,7 @@ const initialize = () => {
 initialize();
 
 app.post('/onoff', function(req, res) {
-    var results = [];
+    let result = true;
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
         let opts = {
@@ -152,9 +152,10 @@ app.post('/onoff', function(req, res) {
             res2.on('data', (chunk) => { rawData += chunk; });
             res2.on('end', () => {
                 try {
-                    var data = JSON.parse(rawData);
+                    let data = JSON.parse(rawData);
                     if (data['success'] == false){
                         // clearTimeout();
+                        result = false;
                         let newHead = refreshAccessToken(refreshToken);
                         req2.setHeader('access_token', newHead[0]);
                         req2.setHeader('sign', newHead[1]);
@@ -167,7 +168,7 @@ app.post('/onoff', function(req, res) {
                 }
             });
         });
-        if (data['success'] != false) {
+        if (result == true) {
             if (devices['vals'][i] == true) {
                 req2.write(offCommand);
                 devices['vals'][i] = false;
