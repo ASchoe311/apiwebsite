@@ -11,6 +11,7 @@ const { access } = require('fs');
 // create new app
 const app = express();
 app.use(express.json());
+app.use(express.Router())
 // app.use(express.static("express"));
 // use it before all route definitions
 // allowing below URL to access these APIs end-points
@@ -52,6 +53,7 @@ var keyExpireTime = 0;
 var refreshToken;
 var accessTokenInterval;
 var brightness;
+var keyGetTime;
 
 const refreshAccessToken = (rt) => {
     var t = Date.now();
@@ -75,7 +77,7 @@ const refreshAccessToken = (rt) => {
             apiHead.sign = signature2;
             console.log(apiHead);
             // clearInterval();
-            accessTokenInterval = setTimeout(refreshAccessToken, 7200000, refreshToken);
+            //accessTokenInterval = setTimeout(refreshAccessToken, 7200000, refreshToken);
             return [data['result']['access_token'], signature2, t];
         })
         .catch((error) => {console.log(error)});
@@ -83,6 +85,7 @@ const refreshAccessToken = (rt) => {
 
 const initialize = () => {
     var t = Date.now();
+    keyGetTime = t;
     const signature1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
     apiHead.t = t;
     apiHead.sign = signature1;
@@ -95,13 +98,14 @@ const initialize = () => {
             apiHead.access_token = data['result']['access_token'];
             keyExpireTime = data['result']['expire_time'];
             refreshToken = data['result']['refresh_token'];
-            accessTokenInterval = setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken)
+            //accessTokenInterval = setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken)
             // setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken);
             t = Date.now();
             const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
             apiHead.t = t;
             apiHead.sign = signature2;
             console.log(apiHead);
+            printTimeLeft();
             let opts = {
                 hostname: 'openapi.tuyaus.com',
                 path: '/v1.0/devices/64304636a4cf12d76aad/status',
@@ -132,9 +136,22 @@ const initialize = () => {
         .catch((error) => {console.log(error)});
 }
 
-initialize();
+function printTimeLeft() {
+    console.log(keyExpireTime);
+    console.log(keyGetTime);
+    console.log(Date.now());
+    let timeLeft = keyGetTime + keyExpireTime - Date.now()
+    let hrsLeft = Math.floor(timeLeft / 3600);
+    let minsLeft = Math.floor((timeLeft / 60) - (hrsLeft * 60));
+    let secsLeft = timeLeft % 60;
+    let logOut = "Key time remaining: " + hrsLeft + " hours, " + minsLeft + " minutes, " + secsLeft + " seconds";
+    console.log(logOut);
+}
 
-app.post('/onoff', function(req, res) {
+initialize();
+setInterval(printTimeLeft, 300000);
+
+app.post('/onoff', async function(req, res) {
     let result = true;
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
@@ -151,30 +168,42 @@ app.post('/onoff', function(req, res) {
             let rawData = '';
             res2.on('data', (chunk) => { rawData += chunk; });
             res2.on('end', () => {
-                try {
-                    let data = JSON.parse(rawData);
-                    if (data['success'] == false){
-                        // clearTimeout();
-                        result = false;
-                        let newHead = refreshAccessToken(refreshToken);
-                        req2.setHeader('access_token', newHead[0]);
-                        req2.setHeader('sign', newHead[1]);
-                        req2.setHeader('t', newHead[2]);
+                    try {
+                        let data = JSON.parse(rawData);
+                        if (data['success'] == false){
+                            (async() => {
+                                let response = await fetch(refreshPath, {headers: apiHead});
+                                let data = await response.json();
+                                console.log(data);
+                                console.log(apiHead);
+                                apiHead.access_token = data['result']['access_token'];
+                                keyExpireTime = data['result']['expire_time'];
+                                refreshToken = data['result']['refresh_token'];
+                                t = Date.now();
+                                keyGetTime = t;
+                                const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                                apiHead.t = t;
+                                apiHead.sign = signature2;
+                                console.log(apiHead);
+                                // clearTimeout();
+                                // result = false;
+                                // let newHead = refreshAccessToken(refreshToken);
+                                req2.setHeader('access_token', apiHead.access_token);
+                                req2.setHeader('sign', apiHead.sign);
+                                req2.setHeader('t', apiHead.t);
+                            })();
+                        }
+                    } catch (e) {
+                      console.error(e.message);
                     }
-                    console.log(data);
-                } catch (e) {
-                  console.error(e.message);
-                }
             });
         });
-        if (result == true) {
-            if (devices['vals'][i] == true) {
-                req2.write(offCommand);
-                devices['vals'][i] = false;
-            } else {
-                req2.write(onCommand);
-                devices['vals'][i] = true;
-            }
+        if (devices['vals'][i] == true) {
+            req2.write(offCommand);
+            devices['vals'][i] = false;
+        } else {
+            req2.write(onCommand);
+            devices['vals'][i] = true;
         }
         req2.end();
     }
@@ -183,7 +212,7 @@ app.post('/onoff', function(req, res) {
     res.status(200).json({command: "on/off", results: {sucess: true, changed_to: devices['vals'][0]}});
 });
 
-app.post('/modechange', function(req, res) {
+app.post('/modechange', async function(req, res) {
     for (var i = 0; i < devices['lights'].length; ++i) {
         var commandEnd = "/v1.0/devices/" + devices['lights'][i] + "/commands";
         let opts = {
@@ -202,13 +231,28 @@ app.post('/modechange', function(req, res) {
                 try {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
-                        // clearTimeout();
-                        let newHead = refreshAccessToken(refreshToken);
-                        req2.setHeader('access_token', newHead[0]);
-                        req2.setHeader('sign', newHead[1]);
-                        req2.setHeader('t', newHead[2]);
+                        (async() => {
+                            let response = await fetch(refreshPath, {headers: apiHead});
+                            let data = await response.json();
+                            console.log(data);
+                            console.log(apiHead);
+                            apiHead.access_token = data['result']['access_token'];
+                            keyExpireTime = data['result']['expire_time'];
+                            refreshToken = data['result']['refresh_token'];
+                            t = Date.now();
+                            keyGetTime = t;
+                            const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                            apiHead.t = t;
+                            apiHead.sign = signature2;
+                            console.log(apiHead);
+                            // clearTimeout();
+                            // result = false;
+                            // let newHead = refreshAccessToken(refreshToken);
+                            req2.setHeader('access_token', apiHead.access_token);
+                            req2.setHeader('sign', apiHead.sign);
+                            req2.setHeader('t', apiHead.t);
+                        })();
                     }
-                    console.log(data);
                 } catch (e) {
                   console.error(e.message);
                 }
@@ -229,7 +273,7 @@ app.post('/modechange', function(req, res) {
 });
 
 
-app.post('/brightup', function(req, res) {
+app.post('/brightup', async function(req, res) {
     let oldBrightness = brightness;
     if (brightness != 255 && devices['modes'][0] != "scene_4") {
         let thisCommand = brightCommand;
@@ -258,13 +302,28 @@ app.post('/brightup', function(req, res) {
                     try {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
-                            // clearTimeout();
-                            let newHead = refreshAccessToken(refreshToken);
-                            req2.setHeader('access_token', newHead[0]);
-                            req2.setHeader('sign', newHead[1]);
-                            req2.setHeader('t', newHead[2]);
+                            (async() => {
+                                let response = await fetch(refreshPath, {headers: apiHead});
+                                let data = await response.json();
+                                console.log(data);
+                                console.log(apiHead);
+                                apiHead.access_token = data['result']['access_token'];
+                                keyExpireTime = data['result']['expire_time'];
+                                refreshToken = data['result']['refresh_token'];
+                                t = Date.now();
+                                keyGetTime = t;
+                                const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                                apiHead.t = t;
+                                apiHead.sign = signature2;
+                                console.log(apiHead);
+                                // clearTimeout();
+                                // result = false;
+                                // let newHead = refreshAccessToken(refreshToken);
+                                req2.setHeader('access_token', apiHead.access_token);
+                                req2.setHeader('sign', apiHead.sign);
+                                req2.setHeader('t', apiHead.t);
+                            })();
                         }
-                        console.log(data);
                     } catch (e) {
                       console.error(e.message);
                     }
@@ -279,7 +338,7 @@ app.post('/brightup', function(req, res) {
     res.status(200).json({command: "brightnessUp", results: {sucess: true, changed_to: brightness}});
 });
 
-app.post('/brightdown', function(req, res) {
+app.post('/brightdown', async function(req, res) {
     let oldBrightness = brightness;
     let canChange = (brightness != 25 && devices['modes'][0] != "scene_4");
     if (canChange) {
@@ -309,13 +368,28 @@ app.post('/brightdown', function(req, res) {
                     try {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
-                            // clearTimeout();
-                            let newHead = refreshAccessToken(refreshToken);
-                            req2.setHeader('access_token', newHead[0]);
-                            req2.setHeader('sign', newHead[1]);
-                            req2.setHeader('t', newHead[2]);
+                            (async() => {
+                                let response = await fetch(refreshPath, {headers: apiHead});
+                                let data = await response.json();
+                                console.log(data);
+                                console.log(apiHead);
+                                apiHead.access_token = data['result']['access_token'];
+                                keyExpireTime = data['result']['expire_time'];
+                                refreshToken = data['result']['refresh_token'];
+                                t = Date.now();
+                                keyGetTime = t;
+                                const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+                                apiHead.t = t;
+                                apiHead.sign = signature2;
+                                console.log(apiHead);
+                                // clearTimeout();
+                                // result = false;
+                                // let newHead = refreshAccessToken(refreshToken);
+                                req2.setHeader('access_token', apiHead.access_token);
+                                req2.setHeader('sign', apiHead.sign);
+                                req2.setHeader('t', apiHead.t);
+                            })();
                         }
-                        console.log(data);
                     } catch (e) {
                       console.error(e.message);
                     }
