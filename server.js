@@ -411,7 +411,7 @@ app.get('/keepalive', function(req, res) {
 
 app.get('/messup', function(req, res) {
     console.log("Messing up...");
-    console.long(apiHead);
+    console.log(apiHead);
     apiHead.access_token = "badaccess";
     console.log(apiHead);
     console.log("Done");
