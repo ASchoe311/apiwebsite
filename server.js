@@ -53,7 +53,7 @@ var refreshToken;
 var accessTokenInterval;
 var brightness;
 
-const refreshAccessToken = async (rt) => {
+const refreshAccessToken = (rt) => {
     var t = Date.now();
     const signature1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
     apiHead.t = t;
@@ -128,8 +128,6 @@ const initialize = () => {
                     }
                 });
             });
-            apiHead.access_token = "badaccesstoken";
-            console.log(apiHead);
         })
         .catch((error) => {console.log(error)});
 }
@@ -157,11 +155,10 @@ app.post('/onoff', function(req, res) {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
                         // clearTimeout();
-                        refreshAccessToken(refreshToken).then((newHead) => {
-                            req2.setHeader('access_token', newHead[0]);
-                            req2.setHeader('sign', newHead[1]);
-                            req2.setHeader('t', newHead[2]);
-                        });
+                        let newHead = refreshAccessToken(refreshToken);
+                        req2.setHeader('access_token', newHead[0]);
+                        req2.setHeader('sign', newHead[1]);
+                        req2.setHeader('t', newHead[2]);
                     }
                     console.log(data);
                     results.push(data);
@@ -205,11 +202,10 @@ app.post('/modechange', function(req, res) {
                     let data = JSON.parse(rawData);
                     if (data['success'] == false){
                         // clearTimeout();
-                        refreshAccessToken(refreshToken).then((newHead) => {
-                            req2.setHeader('access_token', newHead[0]);
-                            req2.setHeader('sign', newHead[1]);
-                            req2.setHeader('t', newHead[2]);
-                        });
+                        let newHead = refreshAccessToken(refreshToken);
+                        req2.setHeader('access_token', newHead[0]);
+                        req2.setHeader('sign', newHead[1]);
+                        req2.setHeader('t', newHead[2]);
                     }
                     console.log(data);
                     results.push(data);
@@ -263,11 +259,10 @@ app.post('/brightup', function(req, res) {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
                             // clearTimeout();
-                            refreshAccessToken(refreshToken).then((newHead) => {
-                                req2.setHeader('access_token', newHead[0]);
-                                req2.setHeader('sign', newHead[1]);
-                                req2.setHeader('t', newHead[2]);
-                            });
+                            let newHead = refreshAccessToken(refreshToken);
+                            req2.setHeader('access_token', newHead[0]);
+                            req2.setHeader('sign', newHead[1]);
+                            req2.setHeader('t', newHead[2]);
                         }
                         console.log(data);
                         results.push(data);
@@ -316,11 +311,10 @@ app.post('/brightdown', function(req, res) {
                         let data = JSON.parse(rawData);
                         if (data['success'] == false){
                             // clearTimeout();
-                            refreshAccessToken(refreshToken).then((newHead) => {
-                                req2.setHeader('access_token', newHead[0]);
-                                req2.setHeader('sign', newHead[1]);
-                                req2.setHeader('t', newHead[2]);
-                            });
+                            let newHead = refreshAccessToken(refreshToken);
+                            req2.setHeader('access_token', newHead[0]);
+                            req2.setHeader('sign', newHead[1]);
+                            req2.setHeader('t', newHead[2]);
                         }
                         console.log(data);
                         results.push(data);
