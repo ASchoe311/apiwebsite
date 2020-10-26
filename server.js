@@ -162,7 +162,6 @@ app.post('/onoff', function(req, res) {
                         req2.setHeader('t', newHead[2]);
                     }
                     console.log(data);
-                    results.push(data);
                 } catch (e) {
                   console.error(e.message);
                 }
