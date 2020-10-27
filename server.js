@@ -200,14 +200,16 @@ app.post('/onoff', async function(req, res) {
                                 console.error(e.message);
                             }
                          })();
-                        i = i-1;
-                        continue;
                     }
                     } catch (e) {
                       console.error(e.message);
                     }
             });
         });
+        if (result == false) {
+            i = i-1;
+            continue;
+        }
         if (devices['vals'][i] == true) {
             req2.write(offCommand);
         } else {
