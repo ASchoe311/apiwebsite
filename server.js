@@ -149,7 +149,7 @@ function printTimeLeft() {
 }
 
 initialize();
-setInterval(printTimeLeft, 300000);
+//setInterval(printTimeLeft, 300000);
 
 app.post('/onoff', async function(req, res) {
     let result = true;
@@ -212,9 +212,9 @@ app.post('/onoff', async function(req, res) {
             req2.write(onCommand);
         }
         req2.end();
+        devices['vals'][i] = !devices['vals'][i];
+        //devices['vals'][1] = !devices['vals'][1];
     }
-    devices['vals'][0] = !devices['vals'][0];
-    devices['vals'][1] = !devices['vals'][1];
     let commandLineOut = "Turned lights " + (devices['vals'][0] == true ? "on" : "off");
     console.log(commandLineOut);
     res.status(200).json({command: "on/off", results: {sucess: true, changed_to: devices['vals'][0]}});
