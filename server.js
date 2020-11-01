@@ -46,8 +46,8 @@ const gorgCommand = JSON.stringify({commands: [{"code": "flash_scene_4",
 const brightCommand = {commands: [{'code': 'bright_value', 'value': 0}]};
 const whiteCommand = JSON.stringify({commands: [{'code': 'work_mode', 'value': 'white'}]});
 
-const devices = {lights: ["64304636a4cf12d76aad", "55008855483fdac28931"], vals: [false, false], modes: ['white', 'white']}
-var apiHead = { client_id: "9ea9sk54a0k2978837d6", access_token: "", sign: "", sign_method: "HMAC-SHA256", t: 0};
+const devices = {lights: ["", ""], vals: [false, false], modes: ['white', 'white']}
+var apiHead = { client_id: "", access_token: "", sign: "", sign_method: "HMAC-SHA256", t: 0};
 var keyExpireTime = 0;
 var refreshToken;
 var accessTokenInterval;
@@ -55,7 +55,7 @@ var brightness;
 
 const refreshAccessToken = (rt) => {
     var t = Date.now();
-    const signature1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
+    const signature1 = crypto.createHmac('sha256', '').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
     apiHead.t = t;
     apiHead.sign = signature1;
     let refreshPath = 'https://openapi.tuyaus.com/v1.0/token/' + refreshToken;
@@ -70,7 +70,7 @@ const refreshAccessToken = (rt) => {
             keyExpireTime = data['result']['expire_time'];
             refreshToken = data['result']['refresh_token'];
             t = Date.now();
-            const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+            const signature2 = crypto.createHmac('sha256', '').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
             apiHead.t = t;
             apiHead.sign = signature2;
             console.log(apiHead);
@@ -83,7 +83,7 @@ const refreshAccessToken = (rt) => {
 
 const initialize = () => {
     var t = Date.now();
-    const signature1 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
+    const signature1 = crypto.createHmac('sha256', '').update(apiHead['client_id']).update(t.toString()).digest("hex").toUpperCase();
     apiHead.t = t;
     apiHead.sign = signature1;
     fetch('https://openapi.tuyaus.com/v1.0/token?grant_type=1', {
@@ -98,7 +98,7 @@ const initialize = () => {
             accessTokenInterval = setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken)
             // setTimeout(refreshAccessToken, keyExpireTime*1000, refreshToken);
             t = Date.now();
-            const signature2 = crypto.createHmac('sha256', 'd6034d97286c4b049ee16874a5a2d92d').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
+            const signature2 = crypto.createHmac('sha256', '').update(apiHead.client_id).update(apiHead.access_token).update(t.toString()).digest("hex").toUpperCase();
             apiHead.t = t;
             apiHead.sign = signature2;
             console.log(apiHead);
@@ -343,10 +343,6 @@ app.post('/newtoken', function(req, res) {
 // default URL to API
 app.get('/', function(req, res) {
     res.send("Nothing to see here");
-});
-
-app.get('/site', function(req, res) {
-    res.sendFile(path.join(__dirname+'/express/index.html'));
 });
 
 app.get('*', function(req, res){
